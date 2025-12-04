@@ -4,6 +4,10 @@ namespace Papimod\Cache;
 
 use DI\ContainerBuilder;
 
+/**
+ * Slim documentation:
+ * [Route expressions caching](https://www.slimframework.com/docs/v4/objects/routing.html#route-expressions-caching)
+ */
 final class DICacheEvent
 {
     public function __invoke(ContainerBuilder $builder): void
