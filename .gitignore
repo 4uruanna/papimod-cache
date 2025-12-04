@@ -1,0 +1,12 @@
+# Operating System
+
+.DS_Store
+
+# Dependencies
+
+/vendor/
+
+# Cache
+
+.phpunit.cache
+.cache/
