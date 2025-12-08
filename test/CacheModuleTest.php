@@ -2,34 +2,37 @@
 
 namespace Papimod\Cache\Test;
 
-use Papi\AppBuilder;
+use Papi\ApiBuilder;
+use Papi\Test\ApiBaseTestCase;
 use Papimod\Cache\CacheModule;
-use Papimod\Dotenv\DotenvModule;
+use Papimod\Dotenv\DotEnvModule;
 use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\TestCase;
 
 #[CoversClass(CacheModule::class)]
-class CacheModuleTest extends TestCase
+class CacheModuleTest extends ApiBaseTestCase
 {
     public function testCreateCache(): void
     {
+        define("ENVIRONMENT_DIRECTORY", __DIR__);
+        define("ENVIRONMENT_FILE", ".test.env");
+
         $cache_directory = __DIR__ . DIRECTORY_SEPARATOR . ".cache";
+        $action_cache_file = $cache_directory . DIRECTORY_SEPARATOR . 'routes.cache';
+        $di_cache_directory = $cache_directory . DIRECTORY_SEPARATOR . 'di';
 
         if (file_exists($cache_directory)) {
             rmdir($cache_directory);
         }
 
-        define("API_ENV_DIRECTORY", __DIR__);
-
-        $app = new AppBuilder()
+        ApiBuilder::getInstance()
             ->setModules([
-                DotenvModule::class,
+                DotEnvModule::class,
                 CacheModule::class
             ])
             ->build();
 
         $this->assertTrue(file_exists($cache_directory));
-        $this->assertTrue(file_exists($cache_directory . DIRECTORY_SEPARATOR . CacheModule::DI_CACHE_DIRECTORY));
-        $this->assertTrue(file_exists($cache_directory . DIRECTORY_SEPARATOR . CacheModule::ACTION_CACHE_FILE));
+        $this->assertTrue(file_exists($action_cache_file));
+        $this->assertTrue(file_exists($di_cache_directory));
     }
 }

@@ -4,24 +4,19 @@ namespace Papimod\Cache;
 
 use Papi\enumerator\EventPhases;
 use Papi\Event;
-use Slim\App;
 
-final class ActionCacheEvent extends Event
+final class ActionCacheEvent implements Event
 {
-    public int $phase = EventPhases::BEFORE_ACTIONS;
+    public static function getPhase(): string
+    {
+        return EventPhases::BEFORE_ACTIONS;
+    }
 
     public function __invoke(mixed ...$args): void
     {
-        /** @var App */
-        $app = $args[0];
-
         if (isset($_SERVER["ENVIRONMENT"]) && $_SERVER["ENVIRONMENT"] === "PRODUCTION") {
-            $app->getRouteCollector()
-                ->setCacheFile(
-                    CACHE_DIRECTORY
-                        . DIRECTORY_SEPARATOR
-                        . CacheModule::ACTION_CACHE_FILE
-                );
+            $args[0]->getRouteCollector()
+                ->setCacheFile(CACHE_DIRECTORY . DIRECTORY_SEPARATOR . 'routes.cache');
         }
     }
 }

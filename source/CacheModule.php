@@ -2,51 +2,33 @@
 
 namespace Papimod\Cache;
 
-use Papi\error\MissingModuleException;
-use Papi\Module;
-use Papimod\Dotenv\DotenvModule;
+use Papi\ApiModule;
+use Papimod\Dotenv\DotEnvModule;
 
-final class CacheModule extends Module
+final class CacheModule extends ApiModule
 {
-    public const DEFAULT_CACHE_DIRECTORY = '.cache';
-
-    public const DI_CACHE_DIRECTORY = 'di';
-
-    public const ACTION_CACHE_FILE = 'routes.cache';
-
-    protected string $path = __DIR__;
-
     public function __construct()
     {
-        $this->checkPrerequisites();
-        $this->configure();
+        $this->prerequisite_list = [DotEnvModule::class];
+
+        $this->event_list = [
+            ActionCacheEvent::class,
+            DiCacheEvent::class
+        ];
     }
 
-    private function checkPrerequisites(): void
-    {
-        if (class_exists("Papimod\\Dotenv\\DotenvModule") === false) {
-            throw new MissingModuleException(self::class, "Papimod\\Dotenv\\DotenvModule");
-        }
-    }
-
-    private function configure(): void
+    public function configure(): void
     {
         if (defined("CACHE_DIRECTORY") === false) {
-            if (isset($_SERVER['CACHE_DIRECTORY'])) {
-                define(
-                    "CACHE_DIRECTORY",
-                    API_ENV_DIRECTORY
-                        . DIRECTORY_SEPARATOR
-                        . trim($_SERVER['CACHE_DIRECTORY'], DIRECTORY_SEPARATOR)
+            $cache_directory = ENVIRONMENT_DIRECTORY
+                . DIRECTORY_SEPARATOR
+                . (
+                    isset($_SERVER['CACHE_DIRECTORY'])
+                    ? trim($_SERVER['CACHE_DIRECTORY'], DIRECTORY_SEPARATOR)
+                    : ".cache"
                 );
-            } else {
-                define(
-                    "CACHE_DIRECTORY",
-                    API_ENV_DIRECTORY
-                        . DIRECTORY_SEPARATOR
-                        . CacheModule::DEFAULT_CACHE_DIRECTORY
-                );
-            }
+
+            define("CACHE_DIRECTORY", $cache_directory);
         }
     }
 }
