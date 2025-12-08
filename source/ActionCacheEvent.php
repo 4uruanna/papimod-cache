@@ -4,6 +4,7 @@ namespace Papimod\Cache;
 
 use Papi\enumerator\EventPhases;
 use Papi\Event;
+use Slim\App;
 
 final class ActionCacheEvent implements Event
 {
@@ -15,7 +16,9 @@ final class ActionCacheEvent implements Event
     public function __invoke(mixed ...$args): void
     {
         if (isset($_SERVER["ENVIRONMENT"]) && $_SERVER["ENVIRONMENT"] === "PRODUCTION") {
-            $args[0]->getRouteCollector()
+            /** @var App */
+            $app = $args[0];
+            $app->getRouteCollector()
                 ->setCacheFile(CACHE_DIRECTORY . DIRECTORY_SEPARATOR . 'routes.cache');
         }
     }

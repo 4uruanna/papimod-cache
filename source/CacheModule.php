@@ -13,7 +13,7 @@ final class CacheModule extends ApiModule
 
         $this->event_list = [
             ActionCacheEvent::class,
-            DiCacheEvent::class
+            DiContainerCacheEvent::class
         ];
     }
 

@@ -5,7 +5,7 @@ namespace Papimod\Cache;
 use Papi\enumerator\EventPhases;
 use Papi\Event;
 
-final class DICacheEvent implements Event
+final class DiContainerCacheEvent implements Event
 {
     public static function getPhase(): string
     {

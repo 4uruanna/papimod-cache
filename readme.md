@@ -13,7 +13,7 @@ I also recommend reading the section "[deployment in production](https://php-di.
 
 ## Prerequisites Modules
 
-- [Papimod/Dotenv](https://github.com/4uruanna/papimod-dotenv)
+- [Dotenv](https://github.com/4uruanna/papimod-dotenv)
 
 ## Configuration
 
