@@ -21,11 +21,11 @@
     },
     "require": {
         "php": ">=8.3.0",
-        "papi/papi": "^1.1.0"
+        "papi/papi": "^1.1.0",
+        "papimod/dotenv": "^1.1.0"
     },
     "require-dev": {
         "squizlabs/php_codesniffer": "^4.0",
-        "phpunit/phpunit": "^12.4",
-        "papimod/dotenv": "^1.1.0"
+        "phpunit/phpunit": "^12.4"
     }
 }
