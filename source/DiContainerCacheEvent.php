@@ -17,7 +17,7 @@ final class DiContainerCacheEvent implements Event
      */
     public function __invoke(mixed ...$args): void
     {
-        if (isset($_SERVER["ENVIRONMENT"]) && $_SERVER["ENVIRONMENT"] === "PRODUCTION") {
+        if (IS_PRODUCTION) {
             $args[0]->enableCompilation(
                 CACHE_DIRECTORY
                     . DIRECTORY_SEPARATOR

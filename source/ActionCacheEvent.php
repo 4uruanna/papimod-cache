@@ -18,7 +18,7 @@ final class ActionCacheEvent implements Event
      */
     public function __invoke(mixed ...$args): void
     {
-        if (isset($_SERVER["ENVIRONMENT"]) && $_SERVER["ENVIRONMENT"] === "PRODUCTION") {
+        if (IS_PRODUCTION) {
             /** @var App */
             $app = $args[0];
             $app->getRouteCollector()
