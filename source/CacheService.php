@@ -2,6 +2,11 @@
 
 namespace Papimod\Cache;
 
+/**
+ * Manages a cache stored in a JSON file.
+ * It handles automatic cache expiration based on a `CACHE_TIMEOUT`
+ * value and provides methods to get and set cached values.
+ */
 final class CacheService
 {
     private array $cache;

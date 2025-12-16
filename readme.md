@@ -44,8 +44,8 @@ I also recommend reading the section "[deployment in production](https://php-di.
 |Description    | Time in seconds between cache refreshes           |
 |Default        | 900                                               |
 
-## Definition
+## API
 
-### CacheService
+- [(class) CacheService](./source/CacheService.php)
 
-Manages a cache stored in a JSON file. It handles automatic cache expiration based on a `CACHE_TIMEOUT` value and provides methods to get and set cached values.
+
