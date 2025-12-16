@@ -5,17 +5,18 @@ namespace Papimod\Cache;
 final class CacheService
 {
     private array $cache;
+    private string $file_path;
 
     public function __construct()
     {
-        $file_path = CACHE_DIRECTORY . DIRECTORY_SEPARATOR . CacheModule::PAPI_CACHE_FILE;
+        $this->file_path = CACHE_DIRECTORY . DIRECTORY_SEPARATOR . CacheModule::PAPI_CACHE_FILE;
 
-        if (file_exists($file_path)) {
-            $this->cache = json_decode(file_get_contents($file_path), true);
+        if (file_exists($this->file_path)) {
+            $this->cache = json_decode(file_get_contents($this->file_path), true);
             $at = (int) $this->get(CacheModule::DEFAULT_CACHE_AT_KEY);
 
             if (time() - $at > CACHE_TIMEOUT) {
-                unlink($file_path);
+                unlink($this->file_path);
                 $this->reset();
             }
         } else {
@@ -43,7 +44,7 @@ final class CacheService
     public function set(string $key, mixed $value): void
     {
         $this->cache[$key] = $value;
-        file_put_contents(CACHE_DIRECTORY, json_encode($this->cache), JSON_PRETTY_PRINT);
+        file_put_contents($this->file_path, json_encode($this->cache), JSON_PRETTY_PRINT);
     }
 
     /**
@@ -51,8 +52,7 @@ final class CacheService
      */
     private function reset(): void
     {
-        $this->cache = [
-            CacheModule::DEFAULT_CACHE_AT_KEY => time()
-        ];
+        $this->cache = [];
+        $this->set(CacheModule::DEFAULT_CACHE_AT_KEY, time());
     }
 }
