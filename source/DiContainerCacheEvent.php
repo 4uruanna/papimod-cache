@@ -12,10 +12,17 @@ final class DiContainerCacheEvent implements Event
         return EventPhases::BEFORE_BUILD_DI;
     }
 
+    /**
+     * Add DI cache
+     */
     public function __invoke(mixed ...$args): void
     {
         if (isset($_SERVER["ENVIRONMENT"]) && $_SERVER["ENVIRONMENT"] === "PRODUCTION") {
-            $args[0]->enableCompilation(CACHE_DIRECTORY . DIRECTORY_SEPARATOR . 'di');
+            $args[0]->enableCompilation(
+                CACHE_DIRECTORY
+                    . DIRECTORY_SEPARATOR
+                    . CacheModule::DEFAULT_DI_DIRECTORY
+            );
         }
     }
 }

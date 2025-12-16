@@ -13,13 +13,20 @@ final class ActionCacheEvent implements Event
         return EventPhases::BEFORE_ACTIONS;
     }
 
+    /**
+     * Add the cache file to the route collector
+     */
     public function __invoke(mixed ...$args): void
     {
         if (isset($_SERVER["ENVIRONMENT"]) && $_SERVER["ENVIRONMENT"] === "PRODUCTION") {
             /** @var App */
             $app = $args[0];
             $app->getRouteCollector()
-                ->setCacheFile(CACHE_DIRECTORY . DIRECTORY_SEPARATOR . 'routes.cache');
+                ->setCacheFile(
+                    CACHE_DIRECTORY
+                        . DIRECTORY_SEPARATOR
+                        . CacheModule::DEFAULT_ACTION_FILE
+                );
         }
     }
 }
