@@ -18,18 +18,18 @@ use RecursiveIteratorIterator;
 #[Small]
 class CacheModuleTest extends ApiBaseTestCase
 {
-    public function testLoadModule(): void
+    public const DIRECTORY = __DIR__ . DIRECTORY_SEPARATOR . CacheModule::DEFAULT_DIRECTORY;
+    public const ACTION_FILE = self::DIRECTORY . DIRECTORY_SEPARATOR . CacheModule::DEFAULT_ACTION_FILE;
+    public const DI_DIRECTORY = self::DIRECTORY . DIRECTORY_SEPARATOR . CacheModule::DEFAULT_DI_DIRECTORY;
+
+    public function setUp(): void
     {
-        define("ENVIRONMENT_DIRECTORY", __DIR__);
-        define("ENVIRONMENT_FILE", ".test.env");
+        parent::setUp();
+        defined("ENVIRONMENT_DIRECTORY") || define("ENVIRONMENT_DIRECTORY", __DIR__);
+        defined("ENVIRONMENT_FILE") || define("ENVIRONMENT_FILE", ".test.env");
 
-        $cache_directory = __DIR__ . DIRECTORY_SEPARATOR . ".cache";
-        $action_cache_file = $cache_directory . DIRECTORY_SEPARATOR . 'routes.cache';
-        $di_cache_directory = $cache_directory . DIRECTORY_SEPARATOR . 'di';
-
-        if (file_exists($cache_directory)) {
-            $deleted = $this->removeDirectory($cache_directory);
-            $this->assertTrue($deleted);
+        if (file_exists(self::DIRECTORY)) {
+            $this->removeDirectory(self::DIRECTORY);
         }
 
         $request = $this->createRequest(HttpMethods::GET, "/foo");
@@ -42,10 +42,21 @@ class CacheModuleTest extends ApiBaseTestCase
             ->setActions([FooAction::class])
             ->build()
             ->handle($request);
+    }
 
-        $this->assertTrue(file_exists($cache_directory), 'Fail to create cache directory');
-        $this->assertTrue(file_exists($di_cache_directory), 'Fail to create DI cache directory');
-        $this->assertTrue(file_exists($action_cache_file), 'Fail to create Action cache');
+    public function testLoadModule(): void
+    {
+        $this->assertTrue(file_exists(self::DIRECTORY), 'Fail to create cache directory');
+    }
+
+    public function testDiCache(): void
+    {
+        $this->assertTrue(file_exists(self::DI_DIRECTORY), 'Fail to create DI cache directory');
+    }
+
+    public function testActionCache(): void
+    {
+        $this->assertTrue(file_exists(self::ACTION_FILE), 'Fail to create Action cache');
     }
 
     private function removeDirectory(string $directory): bool

@@ -10,6 +10,8 @@ use function DI\create;
 final class CacheModule extends ApiModule
 {
     public const DEFAULT_DIRECTORY = ".cache";
+    public const DEFAULT_ACTION_FILE = "actions.cache";
+    public const DEFAULT_DI_DIRECTORY = "di";
     public const DEFAULT_CACHE_TIMEOUT = 900;
     public const DEFAULT_CACHE_AT_KEY = "__at__";
     public const PAPI_CACHE_FILE = "papi.cache";
@@ -52,6 +54,7 @@ final class CacheModule extends ApiModule
             }
 
             define("CACHE_DIRECTORY", $directory);
+            $_SERVER["CACHE_DIRECTORY"] = $directory;
         }
     }
 
@@ -68,6 +71,7 @@ final class CacheModule extends ApiModule
             }
 
             define("CACHE_TIMEOUT", $timeout);
+            $_SERVER["CACHE_TIMEOUT"] = $timeout;
         }
     }
 }
