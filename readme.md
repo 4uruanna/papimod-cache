@@ -34,3 +34,18 @@ I also recommend reading the section "[deployment in production](https://php-di.
 |Type           | string                                            |
 |Description    | Cache directory path                              |
 |Default        | `{{project_directory}}/.cache`                    |
+
+### `CACHE_TIMEOUT` (.ENV)
+
+|               |                                                   |
+|-:             |:-                                                 |
+|Required       | No                                                |
+|Type           | Int                                               |
+|Description    | Time in seconds between cache refreshes           |
+|Default        | 900                                               |
+
+## Definition
+
+### CacheService
+
+Manages a cache stored in a JSON file. It handles automatic cache expiration based on a `CACHE_TIMEOUT` value and provides methods to get and set cached values.
