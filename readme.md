@@ -42,10 +42,68 @@ I also recommend reading the section "[deployment in production](https://php-di.
 |Required       | No                                                |
 |Type           | Int                                               |
 |Description    | Time in seconds between cache refreshes           |
-|Default        | 900                                               |
+|Default        | 86400                                             |
 
 ## API
 
 - [(class) CacheService](./source/CacheService.php)
 
+## Usage
 
+You can add the following options to your  `.env` file:
+
+```
+ENVIRONMENT=PRODUCTION
+CACHE_DIRECTORY=tmp
+CACHE_TIMEOUT=900
+```
+
+Import the module when creating your application:
+
+```php
+require __DIR__ . "/../vendor/autoload.php";
+
+use Papi\PapiBuilder;
+use Papimod\Dotenv\DotEnvModule;
+use Papimod\Cache\CacheModule;
+use function DI\create;
+
+define("PAPI_DOTENV_DIRECTORY", __DIR__); # Optionnal
+define("PAPI_DOTENV_FILE", ".env"); # Optionnal
+
+$builder = new PapiBuilder();
+
+$builder->setModule(
+        DotEnvModule::class,
+        CacheModule::class
+    )
+    ->build()
+    ->run();
+```
+
+Use the dedicated service anywhere:
+
+```php
+final class MyService
+{
+    private readonly CacheService $cache_service;
+
+    public function __construct(CacheService $cache_service)
+    {
+        $this->cache_service = $cache_service;
+    }
+
+    public increment(): string
+    {
+        $foo = $this->cache_service->get('foo');
+
+        if($foo !== null) {
+            $foo++
+        } else {
+            $foo = 1;
+        }
+
+        $this->cache_service->set('foo', $foo, 120);
+    }
+}
+```
