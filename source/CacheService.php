@@ -14,50 +14,68 @@ final class CacheService
 
     public function __construct()
     {
-        $this->file_path = CACHE_DIRECTORY . DIRECTORY_SEPARATOR . CacheModule::PAPI_CACHE_FILE;
+        $this->file_path = PAPI_CACHE_DIRECTORY
+            . DIRECTORY_SEPARATOR
+            . CacheModule::CACHE_PAPI_FILE;
 
-        if (file_exists($this->file_path)) {
-            $this->cache = json_decode(file_get_contents($this->file_path), true);
-            $at = (int) $this->get(CacheModule::DEFAULT_CACHE_AT_KEY);
-
-            if (time() - $at > CACHE_TIMEOUT) {
-                unlink($this->file_path);
-                $this->reset();
-            }
-        } else {
-            $this->reset();
-        }
+        $this->read();
     }
 
-    /**
-     * Retrieves a value from the cache by key
-     *
-     * @param string $key - The key to look up in the cache
-     * @return mixed - The cached value or null if the key doesn't exist
-     */
     public function get(string $key): mixed
     {
-        return $this->cache[$key] ?? null;
+        $result = null;
+
+        if (isset($this->cache[$key])) {
+            if ($this->cache[$key]->ttl > time()) {
+                $result = $this->cache[$key]->value;
+            } else {
+                $this->delete($key);
+            }
+        }
+
+        return $result;
     }
 
-    /**
-     * Stores a value in the cache and persists it to the cache file
-     *
-     * @param string $key - The key used to store the value
-     * @param mixed $value - The value to cache
-     */
-    public function set(string $key, mixed $value): void
+    public function set(string $key, mixed $value, ?int $ttl = null): void
     {
-        $this->cache[$key] = $value;
-        file_put_contents($this->file_path, json_encode($this->cache), JSON_PRETTY_PRINT);
+        $this->cache[$key] = new CacheEntity($key, $value, $ttl);
+        $this->write();
     }
 
-    /**
-     * Resets the cache to its initial state
-     */
-    private function reset(): void
+    public function delete(string $key): void
+    {
+        unset($this->cache[$key]);
+        $this->write();
+    }
+
+    private function write(): void
+    {
+        file_put_contents(
+            $this->file_path,
+            json_encode($this->cache),
+            JSON_PRETTY_PRINT
+        );
+    }
+
+    private function read(): void
     {
         $this->cache = [];
-        $this->set(CacheModule::DEFAULT_CACHE_AT_KEY, time());
+
+        if (file_exists($this->file_path)) {
+            $cache = json_decode(file_get_contents($this->file_path), true);
+            $now = time();
+
+            foreach ($cache as $value) {
+                [
+                    "key" => $key,
+                    "value" => $value,
+                    "ttl" => $ttl
+                ] = $value;
+
+                if ($ttl !== null && (int) $ttl > $now) {
+                    $this->cache[$key] = new CacheEntity($key, $value, $ttl);
+                }
+            }
+        }
     }
 }

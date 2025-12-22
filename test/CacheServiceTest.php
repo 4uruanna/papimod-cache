@@ -2,47 +2,58 @@
 
 namespace Papimod\Cache\Test;
 
-use Papi\ApiBuilder;
+use Papi\PapiBuilder;
 use Papimod\Cache\CacheModule;
 use Papimod\Cache\CacheService;
 use Papimod\Dotenv\DotEnvModule;
 use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\Attributes\Small;
+use PHPUnit\Framework\Attributes\Depends;
+use PHPUnit\Framework\Attributes\Medium;
 use PHPUnit\Framework\TestCase;
 
 #[CoversClass(CacheService::class)]
-#[Small]
+#[Medium]
 final class CacheServiceTest extends TestCase
 {
-    public const PAPI_FILE = CacheModuleTest::DIRECTORY . DIRECTORY_SEPARATOR . CacheModule::PAPI_CACHE_FILE;
+    private PapiBuilder $builder;
+
+    private CacheService $service;
 
     public function setUp(): void
     {
-        defined("ENVIRONMENT_DIRECTORY") || define("ENVIRONMENT_DIRECTORY", __DIR__);
-        defined("ENVIRONMENT_FILE") || define("ENVIRONMENT_FILE", ".test.env");
+        defined("PAPI_DOTENV_DIRECTORY") || define("PAPI_DOTENV_DIRECTORY", __DIR__);
+        defined("PAPI_DOTENV_FILE") || define("PAPI_DOTENV_FILE", ".test.env");
 
-        ApiBuilder::getInstance()
-            ->setModules([
-                DotEnvModule::class,
-                CacheModule::class
-            ])
+        $this->builder = new PapiBuilder();
+
+        $this->builder
+            ->addModule(DotEnvModule::class, CacheModule::class)
             ->build();
+
+        $papi_cache_file = PAPI_CACHE_DIRECTORY . DIRECTORY_SEPARATOR . CacheModule::CACHE_PAPI_FILE;
+        if (file_exists($papi_cache_file)) {
+            unlink($papi_cache_file);
+        }
+
+        $this->service = new CacheService();
     }
 
     public function testSetAndGet(): void
     {
-        if (file_exists(self::PAPI_FILE)) {
-            unlink(self::PAPI_FILE);
-        }
+        $this->service->set("foo", "bar");
+        $this->assertTrue(file_exists(PAPI_CACHE_DIRECTORY . DIRECTORY_SEPARATOR . CacheModule::CACHE_PAPI_FILE));
 
-        $service = new CacheService();
-        $this->assertTrue(file_exists(self::PAPI_FILE), 'Fail to create Papi cache');
+        $arr = json_decode(file_get_contents(PAPI_CACHE_DIRECTORY . DIRECTORY_SEPARATOR . CacheModule::CACHE_PAPI_FILE), true);
+        $this->assertEquals("bar", $arr["foo"]["value"]);
+        $this->assertEquals("bar", $this->service->get("foo"));
+    }
 
-        $service->set("foo", "bar");
-
-        $arr = json_decode(file_get_contents(self::PAPI_FILE), true);
-        $this->assertEquals("bar", $arr["foo"]);
-
-        $this->assertEquals("bar", $service->get("foo"));
+    #[Depends('testSetAndGet')]
+    public function testTtl(): void
+    {
+        $this->service->set("foo2", "bar2", 2);
+        $this->assertEquals("bar2", $this->service->get("foo2"));
+        sleep(2);
+        $this->assertEquals(null, $this->service->get("foo2"));
     }
 }
