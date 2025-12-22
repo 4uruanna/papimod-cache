@@ -2,26 +2,22 @@
 
 namespace Papimod\Cache;
 
-use Papi\enumerator\EventPhases;
-use Papi\Event;
+use Papi\enumerator\EventType;
+use Papi\interface\PapiEventListener;
+use Papimod\Dotenv\Environment;
 
-final class DiContainerCacheEvent implements Event
+final class DiContainerCacheEvent implements PapiEventListener
 {
-    public static function getPhase(): string
+    public function __invoke(EventType $event_type, array $options): void
     {
-        return EventPhases::BEFORE_BUILD_DI;
-    }
-
-    /**
-     * Add DI cache
-     */
-    public function __invoke(mixed ...$args): void
-    {
-        if (IS_PRODUCTION) {
-            $args[0]->enableCompilation(
-                CACHE_DIRECTORY
+        if (
+            Environment::PRODUCTION === ENVIRONMENT
+            && $event_type === EventType::CONFIGURE_DEFINITIONS
+        ) {
+            $options['container_builder']->enableCompilation(
+                PAPI_CACHE_DIRECTORY
                     . DIRECTORY_SEPARATOR
-                    . CacheModule::DEFAULT_DI_DIRECTORY
+                    . CacheModule::CACHE_DI_DIRECTORY
             );
         }
     }

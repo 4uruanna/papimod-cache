@@ -2,30 +2,24 @@
 
 namespace Papimod\Cache;
 
-use Papi\enumerator\EventPhases;
-use Papi\Event;
-use Slim\App;
+use Papi\enumerator\EventType;
+use Papi\interface\PapiEventListener;
+use Papimod\Dotenv\Environment;
 
-final class ActionCacheEvent implements Event
+final class ActionCacheEvent implements PapiEventListener
 {
-    public static function getPhase(): string
+    public function __invoke(EventType $event_type, array $options): void
     {
-        return EventPhases::BEFORE_ACTIONS;
-    }
-
-    /**
-     * Add the cache file to the route collector
-     */
-    public function __invoke(mixed ...$args): void
-    {
-        if (IS_PRODUCTION) {
-            /** @var App */
-            $app = $args[0];
-            $app->getRouteCollector()
+        if (
+            ENVIRONMENT === Environment::PRODUCTION
+            && $event_type === EventType::CONFIGURE_ACTIONS
+        ) {
+            $options['app']
+                ->getRouteCollector()
                 ->setCacheFile(
-                    CACHE_DIRECTORY
+                    PAPI_CACHE_DIRECTORY
                         . DIRECTORY_SEPARATOR
-                        . CacheModule::DEFAULT_ACTION_FILE
+                        . CacheModule::CACHE_ACTION_FILE
                 );
         }
     }
