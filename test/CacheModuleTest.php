@@ -3,60 +3,65 @@
 namespace Papimod\Cache\Test;
 
 use Exception;
-use Papi\ApiBuilder;
-use Papi\enumerator\HttpMethods;
-use Papi\Test\ApiBaseTestCase;
-use Papi\Test\foo\actions\FooAction;
+use Papi\enumerator\HttpMethod;
+use Papi\PapiBuilder;
+use Papi\Test\mock\FooGet;
+use Papi\Test\PapiTestCase;
 use Papimod\Cache\CacheModule;
 use Papimod\Dotenv\DotEnvModule;
 use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\Attributes\Small;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 
 #[CoversClass(CacheModule::class)]
-#[Small]
-class CacheModuleTest extends ApiBaseTestCase
+class CacheModuleTest extends PapiTestCase
 {
-    public const DIRECTORY = __DIR__ . DIRECTORY_SEPARATOR . CacheModule::DEFAULT_DIRECTORY;
-    public const ACTION_FILE = self::DIRECTORY . DIRECTORY_SEPARATOR . CacheModule::DEFAULT_ACTION_FILE;
-    public const DI_DIRECTORY = self::DIRECTORY . DIRECTORY_SEPARATOR . CacheModule::DEFAULT_DI_DIRECTORY;
+    private PapiBuilder $builder;
 
     public function setUp(): void
     {
         parent::setUp();
-        defined("ENVIRONMENT_DIRECTORY") || define("ENVIRONMENT_DIRECTORY", __DIR__);
-        defined("ENVIRONMENT_FILE") || define("ENVIRONMENT_FILE", ".test.env");
-
-        if (file_exists(self::DIRECTORY)) {
-            $this->removeDirectory(self::DIRECTORY);
-        }
-
-        $request = $this->createRequest(HttpMethods::GET, "/foo");
-
-        ApiBuilder::getInstance()
-            ->setModules([
-                DotEnvModule::class,
-                CacheModule::class
-            ])
-            ->setActions([FooAction::class])
-            ->build()
-            ->handle($request);
+        defined("PAPI_DOTENV_DIRECTORY") || define("PAPI_DOTENV_DIRECTORY", __DIR__);
+        defined("PAPI_DOTENV_FILE") || define("PAPI_DOTENV_FILE", ".test.env");
+        $this->builder = new PapiBuilder();
     }
 
     public function testLoadModule(): void
     {
-        $this->assertTrue(file_exists(self::DIRECTORY), 'Fail to create cache directory');
-    }
+        $cache_path = __DIR__ . DIRECTORY_SEPARATOR . ".cache";
 
-    public function testDiCache(): void
-    {
-        $this->assertTrue(file_exists(self::DI_DIRECTORY), 'Fail to create DI cache directory');
-    }
+        if (file_exists($cache_path)) {
+            $this->removeDirectory($cache_path);
+        }
 
-    public function testActionCache(): void
-    {
-        $this->assertTrue(file_exists(self::ACTION_FILE), 'Fail to create Action cache');
+        $request = $this->createRequest(HttpMethod::GET, "/");
+
+        $this->builder
+            ->addModule(
+                DotEnvModule::class,
+                CacheModule::class
+            )
+            ->addAction(FooGet::class)
+            ->build()
+            ->handle($request);
+
+        $this->assertTrue(file_exists($cache_path));
+
+        $this->assertTrue(
+            file_exists(
+                PAPI_CACHE_DIRECTORY
+                    . DIRECTORY_SEPARATOR
+                    . CacheModule::CACHE_DI_DIRECTORY
+            )
+        );
+
+        $this->assertTrue(
+            file_exists(
+                PAPI_CACHE_DIRECTORY
+                    . DIRECTORY_SEPARATOR
+                    . CacheModule::CACHE_ACTION_FILE
+            )
+        );
     }
 
     private function removeDirectory(string $directory): bool
