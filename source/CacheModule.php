@@ -36,7 +36,10 @@ final class CacheModule extends PapiModule
     {
         if (defined("PAPI_CACHE_DIRECTORY") === false) {
             $cache_directory = $_ENV["CACHE_DIRECTORY"] ?? ".cache";
-            $cache_directory = PAPI_DOTENV_DIRECTORY . DIRECTORY_SEPARATOR . trim($cache_directory, DIRECTORY_SEPARATOR);
+            $cache_directory = PAPI_DOTENV_DIRECTORY
+                . DIRECTORY_SEPARATOR
+                . trim($cache_directory, DIRECTORY_SEPARATOR);
+
             define("PAPI_CACHE_DIRECTORY", $cache_directory);
         }
         if (defined("PAPI_CACHE_TIMEOUT") === false) {

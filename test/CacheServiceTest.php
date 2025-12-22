@@ -43,7 +43,15 @@ final class CacheServiceTest extends TestCase
         $this->service->set("foo", "bar");
         $this->assertTrue(file_exists(PAPI_CACHE_DIRECTORY . DIRECTORY_SEPARATOR . CacheModule::CACHE_PAPI_FILE));
 
-        $arr = json_decode(file_get_contents(PAPI_CACHE_DIRECTORY . DIRECTORY_SEPARATOR . CacheModule::CACHE_PAPI_FILE), true);
+        $arr = json_decode(
+            file_get_contents(
+                PAPI_CACHE_DIRECTORY
+                    . DIRECTORY_SEPARATOR
+                    . CacheModule::CACHE_PAPI_FILE
+            ),
+            true
+        );
+
         $this->assertEquals("bar", $arr["foo"]["value"]);
         $this->assertEquals("bar", $this->service->get("foo"));
     }
