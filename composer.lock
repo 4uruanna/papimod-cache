@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "85b7aecd50562d920b08fec64cf3a9df",
+    "content-hash": "0b32d5dc0bc0a00de9d67c1bc43b628b",
     "packages": [
         {
             "name": "fig/http-message-util",
@@ -237,16 +237,16 @@
         },
         {
             "name": "papi/papi",
-            "version": "v1.1.1",
+            "version": "v2.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/4uruanna/papi.git",
-                "reference": "1e34136ab512de8684c6753f2136b97eb009e67b"
+                "reference": "f6d6486afeebf998113a035b94913f47657d5e38"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/4uruanna/papi/zipball/1e34136ab512de8684c6753f2136b97eb009e67b",
-                "reference": "1e34136ab512de8684c6753f2136b97eb009e67b",
+                "url": "https://api.github.com/repos/4uruanna/papi/zipball/f6d6486afeebf998113a035b94913f47657d5e38",
+                "reference": "f6d6486afeebf998113a035b94913f47657d5e38",
                 "shasum": ""
             },
             "require": {
@@ -279,26 +279,26 @@
             "description": "Slim Framework Builder",
             "support": {
                 "issues": "https://github.com/4uruanna/papi/issues",
-                "source": "https://github.com/4uruanna/papi/tree/v1.1.1"
+                "source": "https://github.com/4uruanna/papi/tree/v2.1.1"
             },
-            "time": "2025-12-09T18:33:31+00:00"
+            "time": "2025-12-22T15:45:52+00:00"
         },
         {
             "name": "papimod/dotenv",
-            "version": "v1.1.4",
+            "version": "v2.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/4uruanna/papimod-dotenv.git",
-                "reference": "2b3e600332ca663e1e5218971a17fad3956d7e63"
+                "reference": "e78379831a6f18ce79b134dbff49cc00f9261697"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/4uruanna/papimod-dotenv/zipball/2b3e600332ca663e1e5218971a17fad3956d7e63",
-                "reference": "2b3e600332ca663e1e5218971a17fad3956d7e63",
+                "url": "https://api.github.com/repos/4uruanna/papimod-dotenv/zipball/e78379831a6f18ce79b134dbff49cc00f9261697",
+                "reference": "e78379831a6f18ce79b134dbff49cc00f9261697",
                 "shasum": ""
             },
             "require": {
-                "papi/papi": "^1.1.0",
+                "papi/papi": "^2.1.0",
                 "php": ">=8.3.0",
                 "vlucas/phpdotenv": "^5.6.2"
             },
@@ -326,9 +326,9 @@
             "description": "Module Papi",
             "support": {
                 "issues": "https://github.com/4uruanna/papimod-dotenv/issues",
-                "source": "https://github.com/4uruanna/papimod-dotenv/tree/v1.1.4"
+                "source": "https://github.com/4uruanna/papimod-dotenv/tree/v2.1.0"
             },
-            "time": "2025-12-16T17:25:46+00:00"
+            "time": "2025-12-18T14:37:30+00:00"
         },
         {
             "name": "php-di/invoker",
